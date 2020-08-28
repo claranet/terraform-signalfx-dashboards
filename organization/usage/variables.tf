@@ -5,68 +5,27 @@ variable "multiplier" {
 }
 
 variable "default_org_name" {
-  description = "The default org name to use as filter"
+  description = "The default org name to use as filter for child org. Do nothing if is_parent is false."
   type        = string
+  default     = "MyFavoriteOrg"
 }
 
-variable "hosts_limit_detector" {
-  description = "Map containing name and id of hosts_limit detector"
-  type        = map(string)
-  default     = null
-}
-
-variable "containers_limit_detector" {
-  description = "Map containing name and id of containers_limit detector"
-  type        = map(string)
-  default     = null
-}
-
-variable "custom_metrics_limit_detector" {
-  description = "Map containing name and id of custom_metrics_limit detector"
-  type        = map(string)
-  default     = null
-}
-
-variable "containers_ratio_detector" {
-  description = "Map containing name and id of containers_ratio detector"
-  type        = map(string)
-  default     = null
-}
-
-variable "custom_metrics_ratio_detector" {
-  description = "Map containing name and id of custom_metrics_ratio detector"
-  type        = map(string)
-  default     = null
+variable "is_parent" {
+  description = "Use \"child version\" of org metrics if true. Disable for child org."
+  type = bool
+  default = true
 }
 
 variable "detectors" {
+  description = "Each element represents a detector as a map with its id and name."
   type = map
-}
-
-#variable "dashboards" {
-#  type = map
 #  type = map(object({
-#    org = map(object({
-#      is_parent = bool
 #      containers_limit_detector = map(string)
 #      containers_ratio_detector = map(string)
 #      custom_metrics_limit_detector = map(string)
 #      custom_metrics_ratio_detector = map(string)
 #      hosts_limit_detector = map(string)
 #    }))
-#    child = map(object({
-#      is_parent = bool
-#      containers_limit_detector = map(string)
-#      containers_ratio_detector = map(string)
-#      custom_metrics_limit_detector = map(string)
-#      custom_metrics_ratio_detector = map(string)
-#      hosts_limit_detector = map(string)
-#    }))
-#  }))
-#}
-
-variable "is_parent" {
-  type    = bool
-  default = true
+  default = {}
 }
 

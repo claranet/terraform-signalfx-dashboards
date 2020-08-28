@@ -63,7 +63,7 @@ resource "signalfx_time_chart" "hosts_limit" {
   program_text       = <<-EOF
         A = data('${"sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'host')).publish(label='A"}')
         B = data('${"sf.org.${var.is_parent ? "child." : ""}subscription.hosts').publish(label='B"}')
-        ${var.detectors["hosts_limit"] != null ? "alerts = alerts(detector_id='${var.detectors["hosts_limit"]["id"]}').publish(label='alerts')" : ""}
+        ${lookup(var.detectors, "hosts_limit", null) != null ? "alerts = alerts(detector_id='${var.detectors["hosts_limit"]["id"]}').publish(label='alerts')" : ""}
     EOF
   show_data_markers  = false
   show_event_lines   = false
@@ -76,7 +76,7 @@ resource "signalfx_time_chart" "hosts_limit" {
   }
 
   dynamic "event_options" {
-    for_each = var.detectors["hosts_limit"] != null ? compact([var.detectors["hosts_limit"]["name"]]) : []
+    for_each = lookup(var.detectors, "hosts_limit", null) != null ? compact([var.detectors["hosts_limit"]["name"]]) : []
     content {
       display_name = var.detectors["hosts_limit"]["name"]
       label        = "alerts"
@@ -109,7 +109,7 @@ resource "signalfx_time_chart" "containers_limit" {
   program_text       = <<-EOF
         A = data('${"sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'container')).publish(label='A"}')
         B = data('${"sf.org.${var.is_parent ? "child." : ""}subscription.containers').publish(label='B"}')
-        ${var.detectors["containers_limit"] != null ? "alerts = alerts(detector_id='${var.detectors["containers_limit"]["id"]}').publish(label='alerts')" : ""}
+        ${lookup(var.detectors, "containers_limit", null) != null ? "alerts = alerts(detector_id='${var.detectors["containers_limit"]["id"]}').publish(label='alerts')" : ""}
     EOF
   show_data_markers  = false
   show_event_lines   = false
@@ -122,7 +122,7 @@ resource "signalfx_time_chart" "containers_limit" {
   }
 
   dynamic "event_options" {
-    for_each = var.detectors["containers_limit"] != null ? compact([var.detectors["containers_limit"]["name"]]) : []
+    for_each = lookup(var.detectors, "containers_limit", null) != null ? compact([var.detectors["containers_limit"]["name"]]) : []
     content {
       display_name = var.detectors["containers_limit"]["name"]
       label        = "alerts"
@@ -155,7 +155,7 @@ resource "signalfx_time_chart" "custom_metrics_limit" {
   program_text       = <<-EOF
         A = data('${"sf.org.${var.is_parent ? "child." : ""}numCustomMetrics').publish(label='A"}')
         B = data('${"sf.org.${var.is_parent ? "child." : ""}subscription.customMetrics').publish(label='B"}')
-        ${var.detectors["custom_metrics_limit"] != null ? "alerts = alerts(detector_id='${var.detectors["custom_metrics_limit"]["id"]}').publish(label='alerts')" : ""}
+        ${lookup(var.detectors, "custom_metrics_limit", null) != null ? "alerts = alerts(detector_id='${var.detectors["custom_metrics_limit"]["id"]}').publish(label='alerts')" : ""}
     EOF
   show_data_markers  = false
   show_event_lines   = false
@@ -168,7 +168,7 @@ resource "signalfx_time_chart" "custom_metrics_limit" {
   }
 
   dynamic "event_options" {
-    for_each = var.detectors["custom_metrics_limit"] != null ? compact([var.detectors["custom_metrics_limit"]["name"]]) : []
+    for_each = lookup(var.detectors, "custom_metrics_limit", null) != null ? compact([var.detectors["custom_metrics_limit"]["name"]]) : []
     content {
       display_name = var.detectors["custom_metrics_limit"]["name"]
       label        = "alerts"
@@ -203,7 +203,7 @@ resource "signalfx_time_chart" "containers_ratio" {
         B = data('${"sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'host"}')).publish(label='B', enable=False)
         C = (A / (B*${var.multiplier}0)).scale(100).publish(label='C')
         D = (A-A+100).publish(label='D')
-        ${var.detectors["containers_ratio"] != null ? "alerts = alerts(detector_id='${var.detectors["containers_ratio"]["id"]}').publish(label='alerts')" : ""}
+        ${lookup(var.detectors, "containers_ratio", null) != null ? "alerts = alerts(detector_id='${var.detectors["containers_ratio"]["id"]}').publish(label='alerts')" : ""}
     EOF
   show_data_markers  = false
   show_event_lines   = false
@@ -216,7 +216,7 @@ resource "signalfx_time_chart" "containers_ratio" {
   }
 
   dynamic "event_options" {
-    for_each = var.detectors["containers_ratio"] != null ? compact([var.detectors["containers_ratio"]["name"]]) : []
+    for_each = lookup(var.detectors, "containers_ratio", null) != null ? compact([var.detectors["containers_ratio"]["name"]]) : []
     content {
       display_name = var.detectors["containers_ratio"]["name"]
       label        = "alerts"
@@ -263,7 +263,7 @@ resource "signalfx_time_chart" "custom_metrics_ratio" {
         B = data('${"sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'host"}')).publish(label='B', enable=False)
         C = (A / (B*${var.multiplier}0)).scale(100).publish(label='C')
         D = (A-A+100).publish(label='D')
-        ${var.detectors["custom_metrics_ratio"] != null ? "alerts = alerts(detector_id='${var.detectors["custom_metrics_ratio"]["id"]}').publish(label='alerts')" : ""}
+        ${lookup(var.detectors, "custom_metrics_ratio", null) != null ? "alerts = alerts(detector_id='${var.detectors["custom_metrics_ratio"]["id"]}').publish(label='alerts')" : ""}
     EOF
   show_data_markers  = false
   show_event_lines   = false
@@ -276,7 +276,7 @@ resource "signalfx_time_chart" "custom_metrics_ratio" {
   }
 
   dynamic "event_options" {
-    for_each = var.detectors["custom_metrics_ratio"] != null ? compact([var.detectors["custom_metrics_ratio"]["name"]]) : []
+    for_each = lookup(var.detectors, "custom_metrics_ratio", null) != null ? compact([var.detectors["custom_metrics_ratio"]["name"]]) : []
     content {
       display_name = var.detectors["custom_metrics_ratio"]["name"]
       label        = "alerts"
@@ -313,7 +313,7 @@ resource "signalfx_time_chart" "custom_metrics_ratio" {
 resource "signalfx_dashboard" "usage" {
   charts_resolution = "default"
   dashboard_group   = var.dashboard_group
-  name              = var.name
+  name              = title(var.name)
   time_range        = "-31d"
 
   chart {

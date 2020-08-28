@@ -5,52 +5,27 @@ variable "multiplier" {
 }
 
 variable "default_org_name" {
-  description = "The default org name to use as filter"
+  description = "The default org name to use as filter for child org. Do nothing if is_parent is false."
   type        = string
 }
 
-variable "hosts_limit_detector" {
-  description = "Map containing name and id of hosts_limit detector"
-  type        = map(string)
-  default     = null
-}
-
-variable "containers_limit_detector" {
-  description = "Map containing name and id of containers_limit detector"
-  type        = map(string)
-  default     = null
-}
-
-variable "custom_metrics_limit_detector" {
-  description = "Map containing name and id of custom_metrics_limit detector"
-  type        = map(string)
-  default     = null
-}
-
-variable "containers_ratio_detector" {
-  description = "Map containing name and id of containers_ratio detector"
-  type        = map(string)
-  default     = null
-}
-
-variable "custom_metrics_ratio_detector" {
-  description = "Map containing name and id of custom_metrics_ratio detector"
-  type        = map(string)
-  default     = null
-}
-
-variable "dashboard_group" {
-  type = string
-}
-
-variable "name" {
-  type = string
-}
-
 variable "is_parent" {
+  description = "Use \"child version\" of org metrics if true. Disable for child org."
   type = bool
 }
 
 variable "detectors" {
+  description = "Each element represents a detector as a map with its id and name."
   type = map
 }
+
+variable "dashboard_group" {
+  description = "The dashboard group id to attatch."
+  type = string
+}
+
+variable "name" {
+  description = "The name of the dashboard."
+  type = string
+}
+

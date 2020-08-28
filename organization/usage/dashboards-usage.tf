@@ -10,6 +10,6 @@ module "dashboard_usage" {
   name             = each.key
   is_parent        = each.value.is_parent
   default_org_name = var.default_org_name
-  detectors = var.detectors
+  detectors = each.value.alerts ? var.detectors : {}
 }
 
