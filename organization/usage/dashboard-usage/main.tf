@@ -1,10 +1,10 @@
-resource "signalfx_single_value_chart" "child_hosts_current" {
+resource "signalfx_single_value_chart" "hosts_current" {
   color_by                = "Metric"
   is_timestamp_hidden     = true
   max_delay               = 0
   max_precision           = 0
   name                    = "Hosts"
-  program_text            = "A = data('sf.org.numResourcesMonitored', filter=filter('resourceType', 'host')).mean(over='15m').publish(label='A')"
+  program_text            = "A = data('${"sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'host')).mean(over='15m').publish(label='A"}')"
   secondary_visualization = "None"
   show_spark_line         = false
   unit_prefix             = "Metric"
@@ -16,13 +16,13 @@ resource "signalfx_single_value_chart" "child_hosts_current" {
   }
 }
 
-resource "signalfx_single_value_chart" "child_containers_current" {
+resource "signalfx_single_value_chart" "containers_current" {
   color_by                = "Metric"
   is_timestamp_hidden     = true
   max_delay               = 0
   max_precision           = 0
   name                    = "Containers"
-  program_text            = "A = data('sf.org.numResourcesMonitored', filter=filter('resourceType', 'container')).mean(over='15m').publish(label='A')"
+  program_text            = "A = data('${"sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'container')).mean(over='15m').publish(label='A"}')"
   secondary_visualization = "None"
   show_spark_line         = false
   unit_prefix             = "Metric"
@@ -34,13 +34,13 @@ resource "signalfx_single_value_chart" "child_containers_current" {
   }
 }
 
-resource "signalfx_single_value_chart" "child_custom_metrics_current" {
+resource "signalfx_single_value_chart" "custom_metrics_current" {
   color_by                = "Metric"
   is_timestamp_hidden     = true
   max_delay               = 0
   max_precision           = 0
   name                    = "Custom metrics"
-  program_text            = "A = data('sf.org.numCustomMetrics').mean(over='15m').publish(label='A')"
+  program_text            = "A = data('${"sf.org.${var.is_parent ? "child." : ""}numCustomMetrics').mean(over='15m').publish(label='A"}')"
   secondary_visualization = "None"
   show_spark_line         = false
   unit_prefix             = "Metric"
@@ -52,7 +52,7 @@ resource "signalfx_single_value_chart" "child_custom_metrics_current" {
   }
 }
 
-resource "signalfx_time_chart" "child_hosts_limit" {
+resource "signalfx_time_chart" "hosts_limit" {
   axes_include_zero  = false
   axes_precision     = 0
   color_by           = "Metric"
@@ -61,9 +61,9 @@ resource "signalfx_time_chart" "child_hosts_limit" {
   name               = "Hosts compared to organization limit"
   plot_type          = "AreaChart"
   program_text       = <<-EOF
-        A = data('sf.org.numResourcesMonitored', filter=filter('resourceType', 'host')).publish(label='A')
-        B = data('sf.org.subscription.hosts').publish(label='B')
-        ${var.hosts_limit_detector != null ? "alerts = alerts(detector_id='${var.hosts_limit_detector["id"]}').publish(label='alerts')" : ""}
+        A = data('${"sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'host')).publish(label='A"}')
+        B = data('${"sf.org.${var.is_parent ? "child." : ""}subscription.hosts').publish(label='B"}')
+        ${var.detectors["hosts_limit"] != null ? "alerts = alerts(detector_id='${var.detectors["hosts_limit"]["id"]}').publish(label='alerts')" : ""}
     EOF
   show_data_markers  = false
   show_event_lines   = false
@@ -76,9 +76,9 @@ resource "signalfx_time_chart" "child_hosts_limit" {
   }
 
   dynamic "event_options" {
-    for_each = var.hosts_limit_detector != null ? compact([var.hosts_limit_detector["name"]]) : []
+    for_each = var.detectors["hosts_limit"] != null ? compact([var.detectors["hosts_limit"]["name"]]) : []
     content {
-      display_name = var.hosts_limit_detector["name"]
+      display_name = var.detectors["hosts_limit"]["name"]
       label        = "alerts"
     }
   }
@@ -98,7 +98,7 @@ resource "signalfx_time_chart" "child_hosts_limit" {
   }
 }
 
-resource "signalfx_time_chart" "child_containers_limit" {
+resource "signalfx_time_chart" "containers_limit" {
   axes_include_zero  = false
   axes_precision     = 0
   color_by           = "Metric"
@@ -107,9 +107,9 @@ resource "signalfx_time_chart" "child_containers_limit" {
   name               = "Containers compared to organization limit"
   plot_type          = "AreaChart"
   program_text       = <<-EOF
-        A = data('sf.org.numResourcesMonitored', filter=filter('resourceType', 'container')).publish(label='A')
-        B = data('sf.org.subscription.containers').publish(label='B')
-        ${var.containers_limit_detector != null ? "alerts = alerts(detector_id='${var.containers_limit_detector["id"]}').publish(label='alerts')" : ""}
+        A = data('${"sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'container')).publish(label='A"}')
+        B = data('${"sf.org.${var.is_parent ? "child." : ""}subscription.containers').publish(label='B"}')
+        ${var.detectors["containers_limit"] != null ? "alerts = alerts(detector_id='${var.detectors["containers_limit"]["id"]}').publish(label='alerts')" : ""}
     EOF
   show_data_markers  = false
   show_event_lines   = false
@@ -122,9 +122,9 @@ resource "signalfx_time_chart" "child_containers_limit" {
   }
 
   dynamic "event_options" {
-    for_each = var.containers_limit_detector != null ? compact([var.containers_limit_detector["name"]]) : []
+    for_each = var.detectors["containers_limit"] != null ? compact([var.detectors["containers_limit"]["name"]]) : []
     content {
-      display_name = var.containers_limit_detector["name"]
+      display_name = var.detectors["containers_limit"]["name"]
       label        = "alerts"
     }
   }
@@ -144,7 +144,7 @@ resource "signalfx_time_chart" "child_containers_limit" {
   }
 }
 
-resource "signalfx_time_chart" "child_custom_metrics_limit" {
+resource "signalfx_time_chart" "custom_metrics_limit" {
   axes_include_zero  = false
   axes_precision     = 0
   color_by           = "Metric"
@@ -153,9 +153,9 @@ resource "signalfx_time_chart" "child_custom_metrics_limit" {
   name               = "Custom metrics compared to organization limit"
   plot_type          = "AreaChart"
   program_text       = <<-EOF
-        A = data('sf.org.numCustomMetrics').publish(label='A')
-        B = data('sf.org.subscription.customMetrics').publish(label='B')
-        ${var.custom_metrics_limit_detector != null ? "alerts = alerts(detector_id='${var.custom_metrics_limit_detector["id"]}').publish(label='alerts')" : ""}
+        A = data('${"sf.org.${var.is_parent ? "child." : ""}numCustomMetrics').publish(label='A"}')
+        B = data('${"sf.org.${var.is_parent ? "child." : ""}subscription.customMetrics').publish(label='B"}')
+        ${var.detectors["custom_metrics_limit"] != null ? "alerts = alerts(detector_id='${var.detectors["custom_metrics_limit"]["id"]}').publish(label='alerts')" : ""}
     EOF
   show_data_markers  = false
   show_event_lines   = false
@@ -168,9 +168,9 @@ resource "signalfx_time_chart" "child_custom_metrics_limit" {
   }
 
   dynamic "event_options" {
-    for_each = var.custom_metrics_limit_detector != null ? compact([var.custom_metrics_limit_detector["name"]]) : []
+    for_each = var.detectors["custom_metrics_limit"] != null ? compact([var.detectors["custom_metrics_limit"]["name"]]) : []
     content {
-      display_name = var.custom_metrics_limit_detector["name"]
+      display_name = var.detectors["custom_metrics_limit"]["name"]
       label        = "alerts"
     }
   }
@@ -190,7 +190,7 @@ resource "signalfx_time_chart" "child_custom_metrics_limit" {
   }
 }
 
-resource "signalfx_time_chart" "child_containers_ratio" {
+resource "signalfx_time_chart" "containers_ratio" {
   axes_include_zero  = false
   axes_precision     = 0
   color_by           = "Metric"
@@ -199,11 +199,11 @@ resource "signalfx_time_chart" "child_containers_ratio" {
   name               = "Containers per host ratio evolution"
   plot_type          = "AreaChart"
   program_text       = <<-EOF
-        A = data('sf.org.numResourcesMonitored', filter=filter('resourceType', 'container')).publish(label='A', enable=False)
-        B = data('sf.org.numResourcesMonitored', filter=filter('resourceType', 'host')).publish(label='B', enable=False)
+        A = data('${"sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'container"}')).publish(label='A', enable=False)
+        B = data('${"sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'host"}')).publish(label='B', enable=False)
         C = (A / (B*${var.multiplier}0)).scale(100).publish(label='C')
         D = (A-A+100).publish(label='D')
-        ${var.containers_ratio_detector != null ? "alerts = alerts(detector_id='${var.containers_ratio_detector["id"]}').publish(label='alerts')" : ""}
+        ${var.detectors["containers_ratio"] != null ? "alerts = alerts(detector_id='${var.detectors["containers_ratio"]["id"]}').publish(label='alerts')" : ""}
     EOF
   show_data_markers  = false
   show_event_lines   = false
@@ -216,9 +216,9 @@ resource "signalfx_time_chart" "child_containers_ratio" {
   }
 
   dynamic "event_options" {
-    for_each = var.containers_ratio_detector != null ? compact([var.containers_ratio_detector["name"]]) : []
+    for_each = var.detectors["containers_ratio"] != null ? compact([var.detectors["containers_ratio"]["name"]]) : []
     content {
-      display_name = var.containers_ratio_detector["name"]
+      display_name = var.detectors["containers_ratio"]["name"]
       label        = "alerts"
     }
   }
@@ -250,7 +250,7 @@ resource "signalfx_time_chart" "child_containers_ratio" {
   }
 }
 
-resource "signalfx_time_chart" "child_custom_metrics_ratio" {
+resource "signalfx_time_chart" "custom_metrics_ratio" {
   axes_include_zero  = false
   axes_precision     = 0
   color_by           = "Metric"
@@ -259,11 +259,11 @@ resource "signalfx_time_chart" "child_custom_metrics_ratio" {
   name               = "Custom metrics per host ratio evolution"
   plot_type          = "AreaChart"
   program_text       = <<-EOF
-        A = data('sf.org.numCustomMetrics').publish(label='A', enable=False)
-        B = data('sf.org.numResourcesMonitored', filter=filter('resourceType', 'host')).publish(label='B', enable=False)
+        A = data('${"sf.org.${var.is_parent ? "child." : ""}numCustomMetrics"}').publish(label='A', enable=False)
+        B = data('${"sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'host"}')).publish(label='B', enable=False)
         C = (A / (B*${var.multiplier}0)).scale(100).publish(label='C')
         D = (A-A+100).publish(label='D')
-        ${var.custom_metrics_ratio_detector != null ? "alerts = alerts(detector_id='${var.custom_metrics_ratio_detector["id"]}').publish(label='alerts')" : ""}
+        ${var.detectors["custom_metrics_ratio"] != null ? "alerts = alerts(detector_id='${var.detectors["custom_metrics_ratio"]["id"]}').publish(label='alerts')" : ""}
     EOF
   show_data_markers  = false
   show_event_lines   = false
@@ -276,9 +276,9 @@ resource "signalfx_time_chart" "child_custom_metrics_ratio" {
   }
 
   dynamic "event_options" {
-    for_each = var.custom_metrics_ratio_detector != null ? compact([var.custom_metrics_ratio_detector["name"]]) : []
+    for_each = var.detectors["custom_metrics_ratio"] != null ? compact([var.detectors["custom_metrics_ratio"]["name"]]) : []
     content {
-      display_name = var.custom_metrics_ratio_detector["name"]
+      display_name = var.detectors["custom_metrics_ratio"]["name"]
       label        = "alerts"
     }
   }
@@ -310,10 +310,10 @@ resource "signalfx_time_chart" "child_custom_metrics_ratio" {
   }
 }
 
-resource "signalfx_dashboard" "child_child" {
+resource "signalfx_dashboard" "usage" {
   charts_resolution = "default"
-  dashboard_group   = signalfx_dashboard_group.usage.id
-  name              = "Child organization"
+  dashboard_group   = var.dashboard_group
+  name              = var.name
   time_range        = "-31d"
 
   chart {
@@ -373,16 +373,19 @@ resource "signalfx_dashboard" "child_child" {
     width    = 6
   }
 
-  variable {
-    alias                  = "Child org name"
-    apply_if_exist         = false
-    property               = "childOrgName"
-    replace_only           = false
-    restricted_suggestions = false
-    value_required         = true
-    values = [
-      var.default_org_name,
-    ]
-    values_suggested = []
+  dynamic variable {
+    for_each = var.is_parent ? compact([var.is_parent]) : []
+    content {
+      alias                  = "Child-org name"
+      apply_if_exist         = false
+      property               = "childOrgName"
+      replace_only           = false
+      restricted_suggestions = false
+      value_required         = true
+      values = [
+        var.default_org_name,
+      ]
+      values_suggested = []
+    }
   }
 }

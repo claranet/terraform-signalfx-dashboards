@@ -39,34 +39,18 @@ variable "custom_metrics_ratio_detector" {
   default     = null
 }
 
+variable "dashboard_group" {
+  type = string
+}
+
+variable "name" {
+  type = string
+}
+
+variable "is_parent" {
+  type = bool
+}
+
 variable "detectors" {
   type = map
 }
-
-#variable "dashboards" {
-#  type = map
-#  type = map(object({
-#    org = map(object({
-#      is_parent = bool
-#      containers_limit_detector = map(string)
-#      containers_ratio_detector = map(string)
-#      custom_metrics_limit_detector = map(string)
-#      custom_metrics_ratio_detector = map(string)
-#      hosts_limit_detector = map(string)
-#    }))
-#    child = map(object({
-#      is_parent = bool
-#      containers_limit_detector = map(string)
-#      containers_ratio_detector = map(string)
-#      custom_metrics_limit_detector = map(string)
-#      custom_metrics_ratio_detector = map(string)
-#      hosts_limit_detector = map(string)
-#    }))
-#  }))
-#}
-
-variable "is_parent" {
-  type    = bool
-  default = true
-}
-
