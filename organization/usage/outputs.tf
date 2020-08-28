@@ -3,13 +3,8 @@ output "dashboard_group_id" {
   value       = signalfx_dashboard_group.usage.id
 }
 
-#output "dashboard_child_id" {
-#  description = "The ID of the child dashboard"
-#  value       = signalfx_dashboard.child.id
-#}
-
-#output "dashboard_org_id" {
-#  description = "The ID of the org dashboard"
-#  value       = signalfx_dashboard.org.id
-#}
+output "dashboard_id" {
+  description = "The ID(s) of each dashboard"
+  value = module.dashboard_usage[*]
+}
 
