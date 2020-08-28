@@ -11,21 +11,21 @@ variable "default_org_name" {
 
 variable "is_parent" {
   description = "Use \"child version\" of org metrics if true. Disable for child org."
-  type = bool
+  type        = bool
 }
 
 variable "detectors" {
   description = "Each element represents a detector as a map with its id and name."
-  type = map
+  type        = map
 }
 
 variable "dashboard_group" {
   description = "The dashboard group id to attatch."
-  type = string
+  type        = string
 }
 
 variable "name" {
   description = "The name of the dashboard."
-  type = string
+  type        = string
 }
 

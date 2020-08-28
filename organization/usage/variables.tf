@@ -12,20 +12,20 @@ variable "default_org_name" {
 
 variable "is_parent" {
   description = "Use \"child version\" of org metrics if true. Disable for child org."
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "detectors" {
   description = "Each element represents a detector as a map with its id and name."
-  type = map
-#  type = map(object({
-#      containers_limit_detector = map(string)
-#      containers_ratio_detector = map(string)
-#      custom_metrics_limit_detector = map(string)
-#      custom_metrics_ratio_detector = map(string)
-#      hosts_limit_detector = map(string)
-#    }))
+  type        = map
+  #  type = map(object({
+  #      containers_limit_detector = map(string)
+  #      containers_ratio_detector = map(string)
+  #      custom_metrics_limit_detector = map(string)
+  #      custom_metrics_ratio_detector = map(string)
+  #      hosts_limit_detector = map(string)
+  #    }))
   default = {}
 }
 

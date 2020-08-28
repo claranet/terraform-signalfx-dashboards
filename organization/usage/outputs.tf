@@ -5,6 +5,6 @@ output "dashboard_group_id" {
 
 output "dashboard_id" {
   description = "The ID(s) of each dashboard"
-  value = module.dashboard_usage[*]
+  value       = module.dashboard_usage[*]
 }
 
