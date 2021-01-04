@@ -1,3 +1,49 @@
+resource "signalfx_single_value_chart" "estimated_price" {
+    color_by                = "Metric"
+    is_timestamp_hidden     = true
+    max_delay               = 0
+    max_precision           = 0
+    name                    = "Estimated price"
+    program_text            = <<-EOF
+        A = data('sf.org.child.numResourcesMonitored', filter=filter('resourceType', 'host')).sum(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='A', enable=False)
+        B = data('sf.org.child.numResourcesMonitored', filter=filter('resourceType', 'container')).sum(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='B', enable=False)
+        C = data('sf.org.child.numCustomMetrics').sum(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='C', enable=False)
+        D = (B-A*${var.multiplier}0).above(0, clamp=True).publish(label='D', enable=False)
+        E = (C-A*${var.multiplier}00).above(0, clamp=True).publish(label='E', enable=False)
+        F = ((A*15)+(D/20*15)+(E/200*15)).publish(label='F')
+    EOF
+    secondary_visualization = "None"
+    show_spark_line         = false
+    unit_prefix             = "Metric"
+
+    viz_options {
+        display_name = "B"
+        label        = "B"
+    }
+    viz_options {
+        display_name = "C"
+        label        = "C"
+    }
+    viz_options {
+        display_name = "D"
+        label        = "D"
+    }
+    viz_options {
+        display_name = "E"
+        label        = "E"
+    }
+    viz_options {
+        display_name = "F"
+        label        = "F"
+        value_prefix = "$"
+    }
+    viz_options {
+        color        = "lilac"
+        display_name = "Hosts"
+        label        = "A"
+    }
+}
+
 resource "signalfx_single_value_chart" "hosts_current" {
   color_by                = "Metric"
   is_timestamp_hidden     = true
@@ -261,7 +307,7 @@ resource "signalfx_time_chart" "custom_metrics_ratio" {
   program_text       = <<-EOF
         A = data('${"sf.org.${var.is_parent ? "child." : ""}numCustomMetrics"}').publish(label='A', enable=False)
         B = data('${"sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'host"}')).publish(label='B', enable=False)
-        C = (A / (B*${var.multiplier}0)).scale(100).publish(label='C')
+        C = (A / (B*${var.multiplier}00)).scale(100).publish(label='C')
         D = (A-A+100).publish(label='D')
         ${lookup(var.detectors, "custom_metrics_ratio", null) != null ? "alerts = alerts(detector_id='${var.detectors["custom_metrics_ratio"]["id"]}').publish(label='alerts')" : ""}
     EOF
@@ -318,21 +364,21 @@ resource "signalfx_dashboard" "usage" {
 
   chart {
     chart_id = signalfx_single_value_chart.custom_metrics_current.id
-    column   = 7
+    column   = 9
     height   = 1
     row      = 0
-    width    = 5
+    width    = 3
   }
   chart {
     chart_id = signalfx_single_value_chart.containers_current.id
-    column   = 3
+    column   = 6
     height   = 1
     row      = 0
-    width    = 4
+    width    = 3
   }
   chart {
     chart_id = signalfx_single_value_chart.hosts_current.id
-    column   = 0
+    column   = 3
     height   = 1
     row      = 0
     width    = 3
@@ -371,6 +417,13 @@ resource "signalfx_dashboard" "usage" {
     height   = 1
     row      = 2
     width    = 6
+  }
+  chart {
+    chart_id = signalfx_single_value_chart.estimated_price.id
+    column   = 0
+    height   = 1
+    row      = 0
+    width    = 3
   }
 
   dynamic variable {
