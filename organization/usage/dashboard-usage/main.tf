@@ -1,10 +1,10 @@
 resource "signalfx_single_value_chart" "estimated_price" {
-    color_by                = "Metric"
-    is_timestamp_hidden     = true
-    max_delay               = 0
-    max_precision           = 0
-    name                    = "Estimated price"
-    program_text            = <<-EOF
+  color_by                = "Metric"
+  is_timestamp_hidden     = true
+  max_delay               = 0
+  max_precision           = 0
+  name                    = "Estimated price"
+  program_text            = <<-EOF
         A = data('sf.org.child.numResourcesMonitored', filter=filter('resourceType', 'host')).sum(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='A', enable=False)
         B = data('sf.org.child.numResourcesMonitored', filter=filter('resourceType', 'container')).sum(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='B', enable=False)
         C = data('sf.org.child.numCustomMetrics').sum(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='C', enable=False)
@@ -12,36 +12,36 @@ resource "signalfx_single_value_chart" "estimated_price" {
         E = (C-A*${var.multiplier}00).above(0, clamp=True).publish(label='E', enable=False)
         F = ((A*15)+(D/20*15)+(E/200*15)).publish(label='F')
     EOF
-    secondary_visualization = "None"
-    show_spark_line         = false
-    unit_prefix             = "Metric"
+  secondary_visualization = "None"
+  show_spark_line         = false
+  unit_prefix             = "Metric"
 
-    viz_options {
-        display_name = "B"
-        label        = "B"
-    }
-    viz_options {
-        display_name = "C"
-        label        = "C"
-    }
-    viz_options {
-        display_name = "D"
-        label        = "D"
-    }
-    viz_options {
-        display_name = "E"
-        label        = "E"
-    }
-    viz_options {
-        display_name = "F"
-        label        = "F"
-        value_prefix = "$"
-    }
-    viz_options {
-        color        = "lilac"
-        display_name = "Hosts"
-        label        = "A"
-    }
+  viz_options {
+    display_name = "B"
+    label        = "B"
+  }
+  viz_options {
+    display_name = "C"
+    label        = "C"
+  }
+  viz_options {
+    display_name = "D"
+    label        = "D"
+  }
+  viz_options {
+    display_name = "E"
+    label        = "E"
+  }
+  viz_options {
+    display_name = "F"
+    label        = "F"
+    value_prefix = "$"
+  }
+  viz_options {
+    color        = "lilac"
+    display_name = "Hosts"
+    label        = "A"
+  }
 }
 
 resource "signalfx_single_value_chart" "hosts_current" {
@@ -426,7 +426,7 @@ resource "signalfx_dashboard" "usage" {
     width    = 3
   }
 
-  dynamic variable {
+  dynamic "variable" {
     for_each = var.is_parent ? compact([var.is_parent]) : []
     content {
       alias                  = "Child-org name"
