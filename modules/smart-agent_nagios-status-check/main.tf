@@ -8,7 +8,8 @@ resource "signalfx_heatmap_chart" "nagiosheat" {
   name        = "Nagios check - HeatMap"
   description = "Nagios like heatMap"
 
-  program_text = <<-EOF
+  minimum_resolution = 300
+  program_text       = <<-EOF
     data("nagios.state").publish()
     EOF
 
@@ -43,6 +44,7 @@ resource "signalfx_heatmap_chart" "nagiosheat" {
 resource "signalfx_list_chart" "nagioslist" {
   name        = "Nagios check - List"
   description = "Nagios like list chart"
+  time_range  = 300
 
   program_text = <<-EOF
     data("nagios.state").publish()
