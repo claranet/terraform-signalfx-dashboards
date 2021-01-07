@@ -1,5 +1,5 @@
 resource "signalfx_dashboard_group" "nagios" {
-  name        = "Nagios dashboard group"
+  name        = "Nagios"
   description = "Nagios like dashboards"
 
 }
@@ -161,10 +161,10 @@ resource "signalfx_event_feed_chart" "nagiosevent" {
   program_text = "A = events(eventType='${var.eventtype}').publish(label='A')"
 }
 
-resource "signalfx_dashboard" "nagios" {
+resource "signalfx_dashboard" "nagiosoverview" {
   charts_resolution = "high"
   dashboard_group   = signalfx_dashboard_group.nagios.id
-  name              = "Nagios"
+  name              = "Overview"
   time_range        = var.timerange
   selected_event_overlay {
     signal = var.eventtype
