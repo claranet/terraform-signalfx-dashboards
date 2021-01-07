@@ -18,7 +18,7 @@ variable "is_parent" {
 
 variable "detectors" {
   description = "Each element represents a detector as a map with its id and name."
-  type        = map
+  type        = map(any)
   #  type = map(object({
   #      containers_limit_detector = map(string)
   #      containers_ratio_detector = map(string)

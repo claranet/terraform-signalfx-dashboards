@@ -16,7 +16,7 @@ variable "is_parent" {
 
 variable "detectors" {
   description = "Each element represents a detector as a map with its id and name."
-  type        = map
+  type        = map(any)
 }
 
 variable "dashboard_group" {
