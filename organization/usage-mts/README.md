@@ -2,6 +2,17 @@
 
 ![](././img/dashboard_overview.png)
 
+## How to use this module?
+
+```hcl
+module "signalfx-dashboards-organization-usage-mts" {
+  source = "github.com/claranet/terraform-signalfx-dashboards.git//organization/usage-mts"
+
+  #is_parent = false # Uncomment if deployed on child org
+}
+
+```
+
 ## Notes
 
 - A `Host` represents a real host monitored (either from the agent, the cloud integration or both of them)
