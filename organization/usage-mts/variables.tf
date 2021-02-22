@@ -10,3 +10,8 @@ variable "licence_price" {
   default     = 5
 }
 
+variable "is_parent" {
+  description = "Use \"child version\" of org metrics if true. Disable for child org."
+  type        = bool
+  default     = true
+}

@@ -1,0 +1,8 @@
+MTSB = (MTS-(HOSTS*${licence["pool"]})).above(0, inclusive=True, clamp=True).publish(label='MTSB', enable=${publish["MTSB"]})
+HOSTSB = (MTSB/${licence["pool"]}).above(0, inclusive=True, clamp=True).publish(label='HOSTSB', enable=${publish["HOSTSB"]})
+LIC = (HOSTS+HOSTSB).publish(label='LIC', enable=${publish["LIC"]})
+PRICE = (LIC*${licence["price"]}).publish(label='PRICE', enable=${publish["PRICE"]})
+MTSH = (MTS-MTSB).publish(label='MTSH', enable=${publish["MTSH"]})
+MTSBP = (MTSB/MTS).scale(100).publish(label='MTSBP', enable=${publish["MTSBP"]})
+LICBP = (HOSTSB/LIC).scale(100).publish(label='LICBP', enable=${publish["LICBP"]})
+AVGMTS = (MTS/HOSTS).publish(label='AVGMTS', enable=${publish["AVGMTS"]})
