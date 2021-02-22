@@ -430,7 +430,7 @@ resource "signalfx_single_value_chart" "usage-mts_5" {
   program_text = <<-EOF
     ${format("%s%s",
   templatefile(format("${path.module}/%s", var.is_parent ? local.templates["parent"] : local.templates["child"]), { aggregation = local.aggregations["last"], publish = merge(local.publish, {}) }),
-  templatefile(format("${path.module}/%s", local.templates["common"]), { publish = merge(local.publish, { HOSTSB = "True" }), licence = local.licence })
+  templatefile(format("${path.module}/%s", local.templates["common"]), { publish = merge(local.publish, { AVGMTS = "True" }), licence = local.licence })
 )}
     EOF
 secondary_visualization = "Linear"
