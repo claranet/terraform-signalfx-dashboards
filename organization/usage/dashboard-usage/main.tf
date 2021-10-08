@@ -6,11 +6,11 @@ resource "signalfx_single_value_chart" "estimated_price" {
   name                    = "Estimated price"
   program_text            = <<-EOF
         HOSTS = data('sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'host')).mean(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='HOSTS', enable=False)
-        CTNRS = data('sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'container')).mean(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='CONTAINERS', enable=False)
-        CUMTS = data('sf.org.${var.is_parent ? "child." : ""}numCustomMetrics').mean(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='CUSTOM MTS', enable=False)
-        CTNRSB = combine((0 if CTNRS is None else CTNRS)-HOSTS*${var.multiplier}0).above(0, clamp=True).publish(label='CONTAINERS BURST', enable=False)
-        CUMTSB = combine((0 if CUMTS is None else CUMTS)-HOSTS*${var.multiplier}00).above(0, clamp=True).publish(label='CUSTOM METRICS BURST', enable=False)
-        LIC = ((HOSTS)+(CTNRSB/${var.multiplier}0)+(CUMTSB/${var.multiplier}00)).publish(label='LICENSES', enable=False)
+        CTNRS = data('sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'container')).mean(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='CTNRS', enable=False)
+        CUMTS = data('sf.org.${var.is_parent ? "child." : ""}numCustomMetrics').mean(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='CUMTS', enable=False)
+        CTNRSB = combine((0 if CTNRS is None else CTNRS)-HOSTS*${var.multiplier}0).above(0, clamp=True).publish(label='CTNRSB', enable=False)
+        CUMTSB = combine((0 if CUMTS is None else CUMTS)-HOSTS*${var.multiplier}00).above(0, clamp=True).publish(label='CUMTSB', enable=False)
+        LIC = ((HOSTS)+(CTNRSB/${var.multiplier}0)+(CUMTSB/${var.multiplier}00)).publish(label='LIC', enable=False)
         PRICE = (LIC*${var.license_price}).publish(label='PRICE', enable=True)
     EOF
   secondary_visualization = "None"
