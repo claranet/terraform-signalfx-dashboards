@@ -5,12 +5,13 @@ resource "signalfx_single_value_chart" "estimated_price" {
   max_precision           = 0
   name                    = "Estimated price"
   program_text            = <<-EOF
-        A = data('sf.org.child.numResourcesMonitored', filter=filter('resourceType', 'host')).sum(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='A', enable=False)
-        B = data('sf.org.child.numResourcesMonitored', filter=filter('resourceType', 'container')).sum(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='B', enable=False)
-        C = data('sf.org.child.numCustomMetrics').sum(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='C', enable=False)
-        D = (B-A*${var.multiplier}0).above(0, clamp=True).publish(label='D', enable=False)
-        E = (C-A*${var.multiplier}00).above(0, clamp=True).publish(label='E', enable=False)
-        F = ((A*15)+(D/20*15)+(E/200*15)).publish(label='F')
+        HOSTS = data('${"sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'host')).mean(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='HOSTS', enable=False)
+        CTNRS = data('${"sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'container')).mean(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='CONTAINERS', enable=False)
+        CUMTS = data('${"sf.org.${var.is_parent ? "child." : ""}numCustomMetrics').mean(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='CUSTOM MTS', enable=False)
+        CTNRSB = combine((0 if CTNRS is None else CTNRS)-HOSTS*${var.multiplier}0).above(0, clamp=True).publish(label='CONTAINERS BURST', enable=False)
+        CUMTSB = combine((0 if CUMTS is None else CUMTS)-HOSTS*${var.multiplier}00).above(0, clamp=True).publish(label='CUSTOM METRICS BURST', enable=False)
+        LIC = ((HOSTS)+(CTNRSB/${var.multiplier}0)+(CUMTSB/${var.multiplier}00)).publish(label='LICENSES', enable=False)
+        PRICE = (LIC*${var.license_price}).publish(label='PRICE', enable=True)
     EOF
   secondary_visualization = "None"
   show_spark_line         = false
