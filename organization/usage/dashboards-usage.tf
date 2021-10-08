@@ -9,6 +9,9 @@ module "dashboard_usage" {
   dashboard_group  = signalfx_dashboard_group.usage.id
   name             = each.key
   is_parent        = each.value.is_parent
+  multiplier       = var.multiplier
+  license_price    = var.license_price
+  timezone         = var.timezone
   default_org_name = var.default_org_name
   detectors        = each.value.alerts ? var.detectors : {}
 }

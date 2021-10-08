@@ -5,42 +5,48 @@ resource "signalfx_single_value_chart" "estimated_price" {
   max_precision           = 0
   name                    = "Estimated price"
   program_text            = <<-EOF
-        A = data('sf.org.child.numResourcesMonitored', filter=filter('resourceType', 'host')).sum(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='A', enable=False)
-        B = data('sf.org.child.numResourcesMonitored', filter=filter('resourceType', 'container')).sum(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='B', enable=False)
-        C = data('sf.org.child.numCustomMetrics').sum(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='C', enable=False)
-        D = (B-A*${var.multiplier}0).above(0, clamp=True).publish(label='D', enable=False)
-        E = (C-A*${var.multiplier}00).above(0, clamp=True).publish(label='E', enable=False)
-        F = ((A*15)+(D/20*15)+(E/200*15)).publish(label='F')
+        HOSTS = data('sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'host')).mean(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='HOSTS', enable=False)
+        CTNRS = data('sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'container')).mean(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='CTNRS', enable=False)
+        CUMTS = data('sf.org.${var.is_parent ? "child." : ""}numCustomMetrics').mean(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='CUMTS', enable=False)
+        CTNRSB = combine((0 if CTNRS is None else CTNRS)-HOSTS*${var.multiplier}0).above(0, clamp=True).publish(label='CTNRSB', enable=False)
+        CUMTSB = combine((0 if CUMTS is None else CUMTS)-HOSTS*${var.multiplier}00).above(0, clamp=True).publish(label='CUMTSB', enable=False)
+        LIC = ((HOSTS)+(CTNRSB/${var.multiplier}0)+(CUMTSB/${var.multiplier}00)).publish(label='LIC', enable=False)
+        PRICE = (LIC*${var.license_price}).publish(label='PRICE', enable=True)
     EOF
   secondary_visualization = "None"
   show_spark_line         = false
   unit_prefix             = "Metric"
+  timezone                = var.timezone
 
   viz_options {
-    display_name = "B"
-    label        = "B"
+    display_name = "Containers"
+    label        = "CTNRS"
   }
   viz_options {
-    display_name = "C"
-    label        = "C"
+    display_name = "Custom Metrics"
+    label        = "CUMTS"
   }
   viz_options {
-    display_name = "D"
-    label        = "D"
+    display_name = "Extra Containers"
+    label        = "CTNRSB"
   }
   viz_options {
-    display_name = "E"
-    label        = "E"
+    display_name = "Extra Custom Metrics"
+    label        = "CUMTSB"
   }
   viz_options {
-    display_name = "F"
-    label        = "F"
+    display_name = "Licenses"
+    label        = "LIC"
+  }
+  viz_options {
+    display_name = "Price"
+    label        = "PRICE"
     value_prefix = "$"
   }
   viz_options {
     color        = "lilac"
     display_name = "Hosts"
-    label        = "A"
+    label        = "HOSTS"
   }
 }
 
@@ -54,6 +60,7 @@ resource "signalfx_single_value_chart" "hosts_current" {
   secondary_visualization = "None"
   show_spark_line         = false
   unit_prefix             = "Metric"
+  timezone                = var.timezone
 
   viz_options {
     color        = "lilac"
@@ -72,6 +79,7 @@ resource "signalfx_single_value_chart" "containers_current" {
   secondary_visualization = "None"
   show_spark_line         = false
   unit_prefix             = "Metric"
+  timezone                = var.timezone
 
   viz_options {
     color        = "blue"
@@ -90,6 +98,7 @@ resource "signalfx_single_value_chart" "custom_metrics_current" {
   secondary_visualization = "None"
   show_spark_line         = false
   unit_prefix             = "Metric"
+  timezone                = var.timezone
 
   viz_options {
     color        = "orange"
