@@ -16,6 +16,7 @@ resource "signalfx_single_value_chart" "estimated_price" {
   secondary_visualization = "None"
   show_spark_line         = false
   unit_prefix             = "Metric"
+  timezone                = var.timezone
 
   viz_options {
     display_name = "Containers"
@@ -78,6 +79,7 @@ resource "signalfx_single_value_chart" "containers_current" {
   secondary_visualization = "None"
   show_spark_line         = false
   unit_prefix             = "Metric"
+  timezone                = var.timezone
 
   viz_options {
     color        = "blue"
@@ -96,6 +98,7 @@ resource "signalfx_single_value_chart" "custom_metrics_current" {
   secondary_visualization = "None"
   show_spark_line         = false
   unit_prefix             = "Metric"
+  timezone                = var.timezone
 
   viz_options {
     color        = "orange"
