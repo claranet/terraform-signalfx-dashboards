@@ -5,9 +5,9 @@ resource "signalfx_single_value_chart" "estimated_price" {
   max_precision           = 0
   name                    = "Estimated price"
   program_text            = <<-EOF
-        HOSTS = data('${"sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'host')).mean(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='HOSTS', enable=False)
-        CTNRS = data('${"sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'container')).mean(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='CONTAINERS', enable=False)
-        CUMTS = data('${"sf.org.${var.is_parent ? "child." : ""}numCustomMetrics').mean(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='CUSTOM MTS', enable=False)
+        HOSTS = data('sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'host')).mean(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='HOSTS', enable=False)
+        CTNRS = data('sf.org.${var.is_parent ? "child." : ""}numResourcesMonitored', filter=filter('resourceType', 'container')).mean(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='CONTAINERS', enable=False)
+        CUMTS = data('sf.org.${var.is_parent ? "child." : ""}numCustomMetrics').mean(by=['childOrgId', 'childOrgName']).mean(cycle='hour', cycle_start='0m', partial_values=True).mean(cycle='month', cycle_start='1d', partial_values=True).publish(label='CUSTOM MTS', enable=False)
         CTNRSB = combine((0 if CTNRS is None else CTNRS)-HOSTS*${var.multiplier}0).above(0, clamp=True).publish(label='CONTAINERS BURST', enable=False)
         CUMTSB = combine((0 if CUMTS is None else CUMTS)-HOSTS*${var.multiplier}00).above(0, clamp=True).publish(label='CUSTOM METRICS BURST', enable=False)
         LIC = ((HOSTS)+(CTNRSB/${var.multiplier}0)+(CUMTSB/${var.multiplier}00)).publish(label='LICENSES', enable=False)
