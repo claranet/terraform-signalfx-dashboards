@@ -1,13 +1,11 @@
 variable "multiplier" {
   description = "Multiplier should be 2 for \"enterprise\" or 1 for \"standard\" plan (e.g. 2 = 200 custom metrics and 20 containers per host)."
   type        = number
-  default     = 2
 }
 
 variable "license_price" {
   description = "License price per unit (e.g. public \"enterprise\" plan is $25: https://www.splunk.com/en_us/software/pricing/faqs/devops.html#Splunk-Infrastructure-Monitoring)."
   type        = number
-  default     = 25
 }
 
 variable "default_org_name" {
@@ -18,6 +16,11 @@ variable "default_org_name" {
 variable "is_parent" {
   description = "Use \"child version\" of org metrics if true. Disable for child org."
   type        = bool
+}
+
+variable "timezone" {
+  description = "The time zone used for interpreting calendar windows specified in analytics functions."
+  type        = string
 }
 
 variable "detectors" {

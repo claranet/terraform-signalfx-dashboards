@@ -22,6 +22,12 @@ variable "is_parent" {
   default     = true
 }
 
+variable "timezone" {
+  description = "The time zone used for interpreting calendar windows specified in analytics functions."
+  type        = string
+  default     = "Europe/Paris"
+}
+
 variable "detectors" {
   description = "Each element represents a detector as a map with its id and name."
   type        = map(any)

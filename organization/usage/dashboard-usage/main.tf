@@ -59,6 +59,7 @@ resource "signalfx_single_value_chart" "hosts_current" {
   secondary_visualization = "None"
   show_spark_line         = false
   unit_prefix             = "Metric"
+  timezone                = var.timezone
 
   viz_options {
     color        = "lilac"
