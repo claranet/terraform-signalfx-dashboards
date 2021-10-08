@@ -18,30 +18,34 @@ resource "signalfx_single_value_chart" "estimated_price" {
   unit_prefix             = "Metric"
 
   viz_options {
-    display_name = "B"
-    label        = "B"
+    display_name = "Containers"
+    label        = "CTNRS"
   }
   viz_options {
-    display_name = "C"
-    label        = "C"
+    display_name = "Custom Metrics"
+    label        = "CUMTS"
   }
   viz_options {
-    display_name = "D"
-    label        = "D"
+    display_name = "Extra Containers"
+    label        = "CTNRSB"
   }
   viz_options {
-    display_name = "E"
-    label        = "E"
+    display_name = "Extra Custom Metrics"
+    label        = "CUMTSB"
   }
   viz_options {
-    display_name = "F"
-    label        = "F"
+    display_name = "Licenses"
+    label        = "LIC"
+  }
+  viz_options {
+    display_name = "Price"
+    label        = "PRICE"
     value_prefix = "$"
   }
   viz_options {
     color        = "lilac"
     display_name = "Hosts"
-    label        = "A"
+    label        = "HOSTS"
   }
 }
 
