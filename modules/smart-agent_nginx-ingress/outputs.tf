@@ -4,7 +4,7 @@ output "dashboard_group_id" {
 }
 
 output "dashboard_id" {
-  description = "The ID(s) of overview dashboard"
+  description = "The ID of the overview dashboard"
   value       = signalfx_dashboard.nginx_ingress.id
 }
 

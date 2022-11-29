@@ -16,7 +16,6 @@ resource "signalfx_time_chart" "nginx_ingress_current_requests" {
   program_text = <<-EOF
     data('nginx_ingress_controller_requests').sum(by=['controller_class', 'controller_namespace', 'ingress']).publish()
     EOF
-
 }
 
 resource "signalfx_time_chart" "nginx_ingress_current_request_rate" {
@@ -32,7 +31,6 @@ resource "signalfx_time_chart" "nginx_ingress_current_request_rate" {
   program_text = <<-EOF
     data('nginx_ingress_controller_requests', rollup='rate', extrapolation='zero').sum(by=['controller_class', 'controller_namespace', 'ingress']).publish()
     EOF
-
 }
 
 resource "signalfx_time_chart" "nginx_ingress_http_errors_4xx_ratio" {
@@ -50,7 +48,6 @@ resource "signalfx_time_chart" "nginx_ingress_http_errors_4xx_ratio" {
     B = data('nginx_ingress_controller_requests', filter('sfx_monitored', 'true'), rollup='delta', extrapolation='zero').sum(by=['controller_namespace', 'controller_class', 'ingress'])
     ratio_40X = (A/B).scale(100).fill(value=0).publish('ratio_40X')
     EOF
-
 }
 
 resource "signalfx_time_chart" "nginx_ingress_http_errors_5xx_ratio" {
@@ -68,7 +65,6 @@ resource "signalfx_time_chart" "nginx_ingress_http_errors_5xx_ratio" {
     B = data('nginx_ingress_controller_requests', filter('sfx_monitored', 'true'), rollup='delta', extrapolation='zero').sum(by=['controller_namespace', 'controller_class', 'ingress'])
     ratio_50X = (A/B).scale(100).fill(value=0).publish('ratio_50X')
     EOF
-
 }
 
 resource "signalfx_time_chart" "nginx_ingress_upstream_service_latency_per_ingress" {
@@ -84,7 +80,6 @@ resource "signalfx_time_chart" "nginx_ingress_upstream_service_latency_per_ingre
   program_text = <<-EOF
     data('nginx_ingress_controller_ingress_upstream_latency_seconds', rollup='delta').sum(by=['controller_class', 'controller_namespace', 'ingress']).publish()
     EOF
-
 }
 
 resource "signalfx_time_chart" "nginx_ingress_current_process_cpu_seconds" {
@@ -100,7 +95,6 @@ resource "signalfx_time_chart" "nginx_ingress_current_process_cpu_seconds" {
   program_text = <<-EOF
     data('nginx_ingress_controller_nginx_process_cpu_seconds_total').sum(by=['controller_class', 'controller_namespace']).publish()
     EOF
-
 }
 
 resource "signalfx_time_chart" "nginx_ingress_process_resident_memory_bytes" {
@@ -116,7 +110,6 @@ resource "signalfx_time_chart" "nginx_ingress_process_resident_memory_bytes" {
   program_text = <<-EOF
     data('nginx_ingress_controller_nginx_process_resident_memory_bytes').sum(by=['controller_class', 'controller_namespace']).publish()
     EOF
-
 }
 
 resource "signalfx_time_chart" "nginx_ingress_process_virtual_memory_bytes" {
@@ -132,7 +125,6 @@ resource "signalfx_time_chart" "nginx_ingress_process_virtual_memory_bytes" {
   program_text = <<-EOF
     data('nginx_ingress_controller_nginx_process_virtual_memory_bytes').sum(by=['controller_class', 'controller_namespace']).publish()
     EOF
-
 }
 
 resource "signalfx_dashboard" "nginx_ingress" {
@@ -144,60 +136,60 @@ resource "signalfx_dashboard" "nginx_ingress" {
   chart {
     chart_id = signalfx_time_chart.nginx_ingress_current_requests.id
     column   = 0
+    row      = 0
     height   = 1
     width    = 6
-    row      = 0
   }
   chart {
     chart_id = signalfx_time_chart.nginx_ingress_current_request_rate.id
     column   = 6
+    row      = 0
     height   = 1
     width    = 6
-    row      = 0
   }
 
   chart {
     chart_id = signalfx_time_chart.nginx_ingress_http_errors_4xx_ratio.id
     column   = 0
+    row      = 1
     height   = 1
     width    = 6
-    row      = 1
   }
   chart {
     chart_id = signalfx_time_chart.nginx_ingress_http_errors_5xx_ratio.id
     column   = 6
+    row      = 1
     height   = 1
     width    = 6
-    row      = 1
   }
 
   chart {
     chart_id = signalfx_time_chart.nginx_ingress_upstream_service_latency_per_ingress.id
     column   = 0
+    row      = 2
     height   = 1
     width    = 6
-    row      = 2
   }
   chart {
     chart_id = signalfx_time_chart.nginx_ingress_current_process_cpu_seconds.id
     column   = 6
+    row      = 2
     height   = 1
     width    = 6
-    row      = 2
   }
 
   chart {
     chart_id = signalfx_time_chart.nginx_ingress_process_resident_memory_bytes.id
     column   = 0
+    row      = 3
     height   = 1
     width    = 6
-    row      = 3
   }
   chart {
     chart_id = signalfx_time_chart.nginx_ingress_process_virtual_memory_bytes.id
     column   = 6
+    row      = 3
     height   = 1
     width    = 6
-    row      = 3
   }
 }
